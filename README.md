@@ -1,10 +1,8 @@
-# AWS-Serverless-AI-Image-Analysis_Dashboard
-Serverless AI Image Analysis Platform
 # AWS Serverless AI Image Analysis Platform
 
 A serverless image analysis application built with AWS that automatically analyzes uploaded images using **Amazon Rekognition** and **Amazon Bedrock** and displays the results in a web dashboard.
 
-Project Overview
+## Project Overview
 
 Users select an image from the web dashboard and upload it.
 
@@ -19,7 +17,7 @@ The application then:
 7. Retrieves the results through **API Gateway**
 8. Displays the results in the web dashboard
 
-Architecture
+## Architecture
 
 ```text
 User
@@ -62,7 +60,7 @@ API Gateway
 Web Dashboard
 ```
 
-AWS Services Used
+## AWS Services Used
 
 | Service                | Purpose                                     |
 | ---------------------- | ------------------------------------------- |
@@ -73,7 +71,7 @@ AWS Services Used
 | **Amazon API Gateway** | Provides API endpoints for the dashboard    |
 | **AWS IAM**            | Controls permissions between AWS services   |
 
-Image Analysis
+## Image Analysis
 
 Amazon Rekognition provides:
 
@@ -89,7 +87,7 @@ Amazon Rekognition provides:
 
 The application converts these results into a structured JSON report.
 
-AI Summary
+## AI Summary
 
 The structured Rekognition results are sent to **Amazon Bedrock**.
 
@@ -99,7 +97,7 @@ Bedrock generates a human-readable description such as:
 
 This allows the application to combine traditional computer vision with generative AI.
 
-Security & AWS Architecture
+## Security & AWS Architecture
 
 The project uses:
 
@@ -114,7 +112,7 @@ The browser does **not** receive AWS credentials.
 
 Instead, the backend generates a temporary presigned URL that allows the browser to upload the selected image directly to S3.
 
-Project Structure
+## Project Structure
 
 ```text
 AWS-Image-Analysis-Dashboard/
@@ -146,7 +144,7 @@ AWS-Image-Analysis-Dashboard/
 * Polls for analysis results
 * Displays the returned JSON data
 
-API Endpoints
+## API Endpoints
 
 ### POST `/upload`
 
@@ -180,7 +178,7 @@ Example:
 GET /analysis?file=unique-file-name.jpg
 ```
 
-What I Learned
+## What I Learned
 
 This project gave me hands-on experience with:
 
@@ -197,13 +195,13 @@ This project gave me hands-on experience with:
 * Asynchronous cloud processing
 * Connecting a frontend application to AWS services
 
-Project Goal
+## Project Goal
 
 The goal of this project was to build a practical serverless AI application using multiple AWS services together rather than using a single AI API.
 
 It demonstrates how AWS services can be combined to create an automated, scalable image-processing workflow without managing servers.
 
-Technologies
+## Technologies
 
 **AWS:**
 S3 • Lambda • API Gateway • Rekognition • Bedrock • IAM
@@ -214,6 +212,97 @@ HTML • CSS • JavaScript
 **AI/ML:**
 Computer Vision • OCR • Generative AI • Content Moderation
 
-Cost Note
+## Cost Note
 
 This project uses AWS services that can incur charges depending on usage. Keep testing volumes small and monitor AWS billing when experimenting with the application.
+
+## Demo
+
+### Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+### Image Upload
+
+![Upload](screenshots/upload.png)
+
+### AI Analysis Results
+
+![Analysis Results](screenshots/analysis.png)
+
+## Image Analyzed
+
+![Image Analyzed](screenshots/analyzed_image.jpg)
+
+### AWS Architecture
+
+The AWS console was used to configure the Lambda functions, S3 event trigger, API Gateway routes, IAM permissions, and CORS settings.
+
+![AWS Architecture](screenshots/aws-architecture.png)
+
+### Example Analysis
+
+The application produces a structured JSON report containing detected objects, facial attributes, detected text, safety results, and an AI-generated description.
+
+```json
+{
+  "report_type": "AWS Image Analysis Report",
+  "summary": {
+    "description": "AI-generated image description"
+  },
+  "objects": {
+    "count": 15
+  },
+  "faces": {
+    "count": 1
+  },
+  "text": {
+    "detected": false
+  },
+  "safety": {
+    "status": "No Issues Detected"
+  }
+}
+```
+
+### How It Works
+
+I chose S3 as the starting point because it provides durable object storage and can trigger Lambda when a new image is uploaded.
+
+I used Rekognition for the initial structured image analysis and Bedrock to turn those structured results into a natural-language description.
+
+API Gateway provides the interface between the browser and the AWS backend, while presigned S3 URLs allow the browser to upload images without exposing AWS credentials.
+
+## Challenges & Solutions
+
+### Browser CORS Error
+
+**Problem:**
+The dashboard initially failed when trying to communicate with the AWS API from the browser.
+
+**Solution:**
+Configured CORS in API Gateway to allow the dashboard to send GET, POST, and OPTIONS requests.
+
+### Local Dashboard Security Error
+
+**Problem:**
+Opening `index.html` directly with `file://` caused browser security restrictions when calling the AWS API.
+
+**Solution:**
+Ran the dashboard through a local HTTP server using `http://localhost:8000`.
+
+### Asynchronous Image Processing
+
+**Problem:**
+Image analysis does not complete instantly after an upload.
+
+**Solution:**
+The frontend periodically checks the API for the analysis result until processing is complete.
+
+### Upload Security
+
+**Problem:**
+The browser should not contain AWS credentials.
+
+**Solution:**
+Created a Lambda function that generates temporary S3 presigned upload URLs.
