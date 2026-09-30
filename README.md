@@ -1,4 +1,4 @@
-# AWS-Project-1
+# AWS-Serverless-AI-Image-Analysis_Dashboard
 Serverless AI Image Analysis Platform
 # AWS Serverless AI Image Analysis Platform
 
